@@ -1,47 +1,50 @@
-# Lab 08
-The starter code for lab 08.
+# Lab 09/10
+The starter code for lab 09/10.
 
 ## Overview
-For this lab, you will develop a rudimentary social network, roughly modelled after _Hacker News_ (https://news.ycombinator.com/).  The app will display a sortable `DataTable` of stories with their up votes and down votes, as well as icon buttons allowing the user to increase the number of up/down votes.
+For this lab, you will develop a simple fitness tracking app.  The user will be able to record points, and see a map of those recorded points updated in real time.
 
-_**Note:**  The user will be able to press the up arrow or down arrow icon as many times as they like.  We're not keeping track of which users have voted already._
+_**Note:** This lab is designed to take 2 weeks, and will be worth the value of two lab assignments.  It is recommended that you develop the map interface in the first week, using placeholder data (e.g. an array of locations).  You can implement the geolocation and geocoding functionality in the second week._
 
 ## Instructions
+The floating action button will cause the current location to be recorded, and its address/location name looked up using geocoding.  A `FlutterMap` will display all recorded points, both as a polyline connecting them (in order), and using a map marker.
 
-### The Post Class and Sample Data
-The Post class will consist of the following fields:
-- `title` (`String`)
-- `numUpVotes` (`int`)
-- `numDownVotes` (`int`)
+### The Map
+First, you will need a class to store the data for the stored points (`Location`):
+- `name` (`String` place name, using geocoding)
+- `address` (`String` street number and street name, using geocoding)
+- `latlng` (using the `LatLng` class, storing the geolocation coordinates)
 
-This class will also have a static function (`generateData()`) which will return some (5-10) sample `Post`s.
+Create a placeholder array of such `Location` objects, and use that for the data for your map's polyline and markers.
 
-### Creating the DataTable
-The `DataTable` will consist of three columns:
-- `title` (not numeric)
-- `numUpVotes` (numeric)
-- `numDownVotes` (numeric)
+Optionally, you can create a set of icon buttons on the app bar to zoom in/out, using the `mapController`.  You can use the CTRL key and the mouse to zoom, but this may be easier to control.  This was done in the screenshot, below, but isn't required for full marks.
 
-This `DataTable` will be similar to the in-class demo, but will not support selection or editing.  It will support sorting on all three columns, however.  The data for this table will be taken from the `generateData()` method on the `Post` class.
+The `FlutterMap` will have 3 main components:
+- options which will set the max and min zoom levels
+- mapController which can update the centre of the map programmatically
+    - https://pub.dev/documentation/flutter_map/latest/flutter_map/MapController-class.html 
+- layers which will have the following layers:
+    - `TileLayerOptions` - this will be configured to use a MapBox API (use your own token)
+    - `MarkerLayerOptions` - this will generate a list of `Marker` instances, one for each location
+    - `PolylineLayerOptions` - this will generate a single `Polyline` instance, consisting of the stored location points
 
-The `title` column will merely display a simple `Text` widget.  The other two columns will generate both a `Text` widget (to display the current value), and an `IconButton` (to allow the user to change the value).  A screenshot of the desired table appearance, is shown below:
+### Creating the Data
+The floating action button for the app will do the following:
+- Use the geolocator plug-in to get the current position
+- Use the geolocator plug-in to obtain the placemark for the current position, which will contain:
+    - `name`:  `placemark.name`
+    - `address`:  `placemark.subThoroughfare`, a space, then `placemark.thoroughfare`
+- Create a new instance of Location
+- Add this new Location to the list
 
-![the data table](images/data_table.png)
+The data should now be dynamic.  You can enter different GPS coordinates using the settings of the emulator, if you want to test it out.  You can also download and use a GPX/KML file, which contains a list of geolocation coordinates.  This is what was done for the screenshot.  Alternatively, you can use a physical device.
 
-_Figure 1 - The DataTable_
+One such file, representing a hike through the wilderness, can be found in this repository:
+- `data/cedar_valley.gpx`
 
-Please note the app bar at the top, which has a chart icon to take you to the chart page (described in the next section).
+![a screenshot of the app](images/map.png)
 
-### The Chart
-The widget containing the `DataTable` will pass its post data to this widget, as an argument.  This widget will generate a horizontal bar chart with two series:
-- up votes
-- down votes
-
-The post's title will be used as the domain for both series.  A screenshot of the desired chart is shown below:
-
-![the chart](images/chart.png)
- 
-_Figure 2 - The bar chart_
+_Figure 1 - A screenshot of the app, showing the map, the floating action button, and the app bar icons_
 
 ## Getting Help
 If you run into difficulty, you may wish to check out some of the following resources:
